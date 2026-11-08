@@ -45,60 +45,35 @@ PLAN.md         # 本文件
 - [x] 勘察 PDF 结构，确定数据源与提取策略
 - [x] 编写 PLAN.md 并提交
 
-### M1 — 任务摘要页数据提取
-- [ ] 编写 `scripts/extract_missions.py`：
-  - 按 `Page 2-N-STS-X` 页眉定位 135 个任务的页面；
-  - 用 pdfplumber 词级 x 坐标把 12 列版面切分为独立列文本；
-  - 正则提取关键字段：
-    - 任务号（官方 STS 编号 + 原始编号 + 序号）、轨道器（OV-101/099/102/103/104/105）
-    - 发射日期、计划/实际发射时间（EST + GMT）、发射工位（39A/39B-序号）
-    - 着陆场/跑道、着陆时间（GMT）、任务时长（Elapsed Time）
-    - 乘组规模（按 CDR/PLT/MS 计数）与飞行主管数量
-    - 轨道倾角、入射轨道 HA/HP（NM）、轨道器方向
-    - 关键事件 MET：MECO、SRB SEP、ET SEP、OMS-1/2
-    - 着陆重量、EOM 重量、X CG 等
-  - 输出 `data/missions.csv`
-- [ ] 编写 `tests/test_extract_missions.py`：对 STS-1/STS-2/STS-135 等已知真值断言
-  （如 STS-1：1981-04-12 发射、EDW 着陆、时长 54:20:53、乘组 2 人）
-- [ ] 验收：135 行、无缺任务、测试通过 → **提交 M1**
+### M1 — 任务摘要页数据提取 ✅（已完成）
+- [x] 编写 `scripts/extract_missions.py`（12 列坐标切分 + 宽字距重连 + 正则字段提取）
+- [x] 输出 `data/missions.csv`（136 行 × 60 列：135 次飞行 + 取消任务 51-E）
+- [x] `tests/test_extract.py`：18 项断言（STS-1/135 参考值、轨道器计数、单调性等）
+- 验收：135 行、序号无缺、25 项测试通过 → **已提交**
 
-### M2 — 附录 A 重量表提取
-- [ ] 编写 `scripts/extract_weights.py`：表格线定位 + 跨页/跨行续行合并，
-  输出 `data/weights.csv`（数值型列统一为 lbs）
-- [ ] 测试：对 STS-1/STS-135 已知值断言；135 行完整性
-- [ ] 验收：测试通过 → **提交 M2**
+### M2 — 附录 A 重量表提取 ✅（已完成）
+- [x] `scripts/extract_weights.py`：表格线提取 + 合并单元格拆分 + 锚定列映射
+  （早期 SODB 页与后期 TDDP 页中部载荷列布局不同，改用全表一致的锚定列）
+- [x] `data/weights.csv`（135 行 × 30 列）；`tests/test_weights.py` 7 项测试
+- 验收：双源重量 0 差异 → **已提交**
 
-### M3 — 数据核实
-- [ ] `scripts/validate.py`，两级校验：
-  - **内部一致性**：
-    - 任务数 = 135，任务号连续无缺失；
-    - 发射日期单调递增；发射日期 ≤ 着陆日期；
-    - 任务时长 ≈ 着陆 GMT − 发射 GMT（容差 ±2 分钟，跨日校验）；
-    - 任务页重量字段 vs 附录 A 对应列一致；
-    - 乘组人数、轨道器飞行次数累加与各轨道器总数（OV-102:28, OV-099:10, OV-103:39, OV-104:33, OV-105:25）一致。
-  - **外部交叉核对**：与 Wikipedia《List of Space Shuttle missions》及 NASA 公开数据核对
-    发射日期、任务时长、轨道器、着陆场、乘组人数（允许时区/取整差异）。
-- [ ] 输出 `output/reports/validation_report.md`（含差异清单与处置说明）
-- [ ] 验收：校验通过或差异均有解释 → **提交 M3**
+### M3 — 数据核实 ✅（已完成）
+- [x] `scripts/validate.py` 两级校验（内部 11 项 + 外部 4 项）
+- [x] 验证驱动修复：OCR 天数离群值、误读发射日期（STS-4/7）、乘组头格式、
+  STS-107 计划着陆场置空、GMT/印刷日期仲裁
+- [x] 结果：**0 错误、3 警告**（均为文档口径差异，已记录于报告）
+- [x] 外部核对：发射日期 135/135、轨道器 135/135、时长 134/135、乘组 134/135
+- [x] `output/reports/validation_report.md` → **已提交**
 
-### M4 — 分析图表
-- [ ] `scripts/plots.py` 输出 PNG 至 `output/figures/`：
-  1. 每年发射次数柱状图（1981–2011）
-  2. 各轨道器飞行次数与任务时长分布
-  3. 任务时长随任务序号演变（含 Challenger/ Columbia 事故停飞窗口标注）
-  4. 乘组规模演变
-  5. 轨道倾角分布（28.45°/39°/51.6°/57° 聚类）
-  6. 入射轨道高度（HA/HP）散点
-  7. 着陆场统计（KSC/EDW/其他）及随时间占比
-  8. 发射时刻昼夜分布
-  9. 重量演变：着陆重量/EOM 重量/累积载荷（附录 A）
-  10. 相邻任务发射间隔与年飞行率
-- [ ] 验收：图全部生成、可读、无空图 → **提交 M4**
+### M4 — 分析图表 ✅（已完成）
+- [x] `scripts/plots.py` → `output/figures/` 10 张 PNG（150 dpi）
+- [x] 图表经视觉审查修正（KSC 78 / EDW 54 / WSMR 1 与史实一致）
+- 验收：全部生成、经视觉模型审查 → **已提交**
 
-### M5 — 汇总报告
-- [ ] 汇总 Excel 工作簿 `data/space_shuttle_missions.xlsx`（missions/weights/directors/校验差异 sheet）
-- [ ] 编写 `output/reports/ANALYSIS.md` 分析报告（关键发现 + 图表引用）
-- [ ] 更新 PLAN.md 勾选状态 → **提交 M5**
+### M5 — 汇总报告 ✅（已完成）
+- [x] `scripts/build_workbook.py` → `data/space_shuttle_missions.xlsx`（4 sheet）
+- [x] `output/reports/ANALYSIS.md` 分析报告
+- [x] 更新 PLAN.md → **已提交**
 
 ## 约定
 
