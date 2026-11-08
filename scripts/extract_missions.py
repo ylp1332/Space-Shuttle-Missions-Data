@@ -158,12 +158,22 @@ def extract_mission(m: sp.MissionPages) -> dict:
             names.append(f"{pending_role}: {s}")
             pending_role = None
     rec["crew_size"] = len(roles) or None
-    # the CREW column header carries the authoritative size "(6)"; prefer it
-    for ln in crew_lines[:4]:
-        msz = re.match(r"^\((\d)\)$", ln.strip())
+    # The CREW column header carries the authoritative size.  Formats:
+    # '(6)', '(6 )', '(10) 7 UP, 8 DOWN' (crew swap), '(6+1 UP/6+1 DN)',
+    # '(7 up, 6 down)'.  The launched (UP) count is the crew size and
+    # takes precedence over the parenthesized total.
+    crew_hdr = " ".join(crew_lines[:5])
+    m_up = re.search(r"(\d+)\s*\+?\s*(\d*)\s*UP\b", crew_hdr, re.I)
+    if m_up:
+        extra = int(m_up.group(2)) if m_up.group(2) else 0
+        rec["crew_size"] = int(m_up.group(1)) + extra
+    else:
+        msz = re.search(r"^\(\s*(\d)\s*\)$", crew_hdr.split("\n")[1].strip()) \
+            if len(crew_hdr.split("\n")) > 1 else None
+        if not msz:
+            msz = re.search(r"\(\s*(\d)\s*\)", crew_hdr)
         if msz:
             rec["crew_size"] = int(msz.group(1))
-            break
     rec["crew_roles"] = " ".join(roles)
     rec["crew_names"] = "; ".join(names)
     if "FLIGHT DIRECTORS" in crew_text:
@@ -200,6 +210,15 @@ def extract_mission(m: sp.MissionPages) -> dict:
                 rec["launch_year"] = yy
                 break
     rec["launch_dt_utc"] = parse_gmt(rec["launch_year"], gmt) if gmt and rec["launch_year"] else None
+    # if the printed date is off by more than a day from the GMT stamp
+    # it was mis-extracted (e.g. STS-4 picked up the landing date);
+    # local-vs-UTC day shifts of +-1 day are legitimate and kept
+    if rec["launch_dt_utc"] is not None and rec["launch_date"] is not None:
+        delta = abs((rec["launch_dt_utc"].normalize()
+                     - pd.Timestamp(rec["launch_date"])).days)
+        if delta > 1:
+            rec["launch_date"] = str(rec["launch_dt_utc"].date())
+            rec["launch_year"] = rec["launch_dt_utc"].year
     rec["launch_planned_local"] = first(r"([\d:]+\s?[AP]M\s?[A-Z]{2,3})\(\s?P\s?\)", lau)
     rec["launch_actual_local"] = first(r"([\d:]+\s?[AP]M\s?[A-Z]{2,3})\(\s?A\s?\)", lau)
     rec["window_hours"] = first(r"WINDOW[^:\n]*:?\s?([\d.]+)\s?HOURS", lau, re.I)
@@ -222,7 +241,15 @@ def extract_mission(m: sp.MissionPages) -> dict:
         landing_date, _ = find_date(lan)
     rec["landing_date"] = landing_date
 
-    gmts = list(re.finditer(GMT_RE, lan))
+    gmts = [g for g in re.finditer(GMT_RE, lan)
+            if 1 <= int(g.group(1)) <= 366]
+    # OCR digit errors create outlier days (775 for 175, 12 for 212):
+    # keep only the majority day among the stamp cluster
+    if gmts:
+        from collections import Counter
+        days = Counter(int(g.group(1)) for g in gmts)
+        maj = days.most_common(1)[0][0]
+        gmts = [g for g in gmts if int(g.group(1)) == maj]
     def after_label(*labels):
         for lab in labels:
             lm = re.search(lab, lan)
@@ -246,8 +273,15 @@ def extract_mission(m: sp.MissionPages) -> dict:
         if m2:
             rec["landing_site"] = m2.group(0)
     # landing date fallback: derive from the wheels-stop stamp
-    if rec["landing_date"] is None and rec["wheels_stop_utc"] is not None:
-        rec["landing_date"] = str(rec["wheels_stop_utc"].date())
+    if rec["wheels_stop_utc"] is not None:
+        ws_date = str(rec["wheels_stop_utc"].date())
+        if rec["landing_date"] is None:
+            rec["landing_date"] = ws_date
+        else:
+            delta = abs((pd.Timestamp(rec["landing_date"])
+                         - rec["wheels_stop_utc"].normalize()).days)
+            if delta > 1:  # mis-extracted; trust the GMT stamp
+                rec["landing_date"] = ws_date
     dur = find_duration(
         *(txt[c] for c in ("LANDING", "SSME", "SRB_ET", "INC", "HAHP",
                            "PAYLOAD_WT", "PAYLOADS", "HIGHLIGHTS")))
@@ -350,6 +384,14 @@ def main():
     print(f"missions grouped: {len(missions)}")
     rows = [extract_mission(m) for m in missions]
     df = pd.DataFrame(rows)
+
+    # orbiter flight numbering: fill gaps by order within each orbiter
+    # (a few pages print the number in a form the regex misses)
+    flown = df.cancelled == 0
+    ordered = df[flown].sort_values("flight_seq").copy()
+    ordered["orbiter_flight_no"] = ordered.groupby("orbiter").cumcount() + 1
+    df["orbiter_flight_no"] = df["orbiter_flight_no"].astype("object")
+    df.loc[ordered.index, "orbiter_flight_no"] = ordered["orbiter_flight_no"]
 
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
     df.to_csv(args.out, index=False)
