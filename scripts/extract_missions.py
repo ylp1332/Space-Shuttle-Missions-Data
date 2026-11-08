@@ -272,6 +272,11 @@ def extract_mission(m: sp.MissionPages) -> dict:
         m2 = re.search(r"(EDW|KSC|NOR|WSMR)\s?(\d{1,2})\b", full)
         if m2:
             rec["landing_site"] = m2.group(0)
+    if rec["landing_site"] is not None and \
+            re.search(r"PLANNED\s+LAND|LOST\s+CONTACT|DID\s+NOT\s+LAND", lan, re.I):
+        # STS-107: the landing column lists the planned site only
+        rec["landing_site"] = None
+        rec["landing_date"] = None
     # landing date fallback: derive from the wheels-stop stamp
     if rec["wheels_stop_utc"] is not None:
         ws_date = str(rec["wheels_stop_utc"].date())

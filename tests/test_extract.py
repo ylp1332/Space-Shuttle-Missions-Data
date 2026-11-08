@@ -153,7 +153,7 @@ def test_key_field_completeness(flown):
         missing = flown[flown[col].isna()].designation.tolist()
         assert missing == [], f"{col} missing: {missing}"
     # only the two accidents lack a landing site/date
-    assert flown[flown.landing_site.isna()].designation.tolist() == ["STS 51-L"]
+    assert flown[flown.landing_site.isna()].designation.tolist() ==         ["STS 51-L", "STS-107"]
 
 
 def test_orbiter_counts_match_history(flown):
