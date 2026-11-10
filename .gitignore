@@ -6,3 +6,7 @@ __pycache__/
 
 # Excel owner lock files while a workbook is open
 ~$*
+.~lock.*
+
+# one-shot backup taken before adding weights_metric sheet (kept on disk)
+data/weights-revised_backup.xlsx
