@@ -9,7 +9,7 @@
 | 文件 | 内容 | 规模 |
 |---|---|---|
 | `data/missions.csv` | 每任务一行：任务号、轨道器、发射/着陆时间（GMT）、任务时长、乘组、飞行主管、轨道参数、关键事件 MET、着陆场等 | 136 行 × 60 列 |
-| `data/weights.csv` | 附录 A 重量表：轨道器/推进剂/载荷/ET/SRB 重量、累积重量、Mach 3 与着陆重量及重心 | 135 行 × 30 列 |
+| `data/weights.csv` | 附录 A 重量表：轨道器/推进剂/载荷/ET/SRB 重量、累积重量、Mach 3 与着陆重量及纵向质心 | 135 行 × 30 列 |
 | `data/weights-revised.xlsx` | 人工校对版重量数据（含 2 处源文档印刷错误修正）：`weights`（lbs/in）+ `weights_mks`（kg/m）双表单 | 135 行 × 19 列 ×2 |
 | `data/space_shuttle_missions.xlsx` | 汇总工作簿（4 sheet：Missions / Weights_AppendixA / Reference_Wikipedia / Summary） | — |
 | `data/reference/wiki_sts_list.csv` | 外部核对参考（Wikipedia 任务列表，已入库） | 135 行 |
@@ -20,7 +20,7 @@
 data/           # 提取出的数据集与汇总工作簿
   reference/          # 外部核对参考数据
 docs/           # 项目文档（PLAN.md 工作计划）
-refs/           # NASA 源 PDF（40MB）+ 质心包线等中文参考文档（均已入库）
+refs/           # NASA 源 PDF（40MB）+ 纵向质心包线等中文参考文档（均已入库）
 scripts/        # 提取/校验/绘图/分析/工作簿脚本
 tests/          # pytest 单元测试（25 项）
 output/
@@ -85,7 +85,7 @@ python -m pytest
 - **外部核对**：发射日期 135/135、轨道器 135/135、时长 134/135、乘组 134/135
   与 Wikipedia 任务列表一致（差异项均为文档口径问题，详见报告）
 - **源文档勘误**（已在 `weights-revised.xlsx` 修正并记录）：STS-125 两列重量对调、
-  STS-5 Mach 3 质心首位数字误排
+  STS-5 Mach 3 纵向质心首位数字误排
 - 详见 [`output/reports/validation_report.md`](output/reports/validation_report.md)、
   [`output/reports/ANALYSIS.md`](output/reports/ANALYSIS.md) 与
   [`output/reports/WEIGHTS_ANALYSIS.md`](output/reports/WEIGHTS_ANALYSIS.md)

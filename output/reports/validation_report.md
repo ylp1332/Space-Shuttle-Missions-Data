@@ -24,8 +24,8 @@ Reference: Wikipedia List of Space Shuttle missions, 135 rows, joined 135
 | cross-source: landing weight (page vs Appendix A) | warning | 0 |
 | liftoff weight = orbiter+payload+ET+2xSRB (<5000 lbs) | warning | 3 |
 | orbit-insert weight <= orbiter+payload | warning | 1 |
-| Mach-3 EOM X c.g. within 1000-1200 in | warning | 1 |
-| landing X c.g. within 1000-1200 in | warning | 0 |
+| Mach-3 EOM Xcg within 1000-1200 in | warning | 1 |
+| landing Xcg within 1000-1200 in | warning | 0 |
 | inclination range 28-62.5 deg | error | 0 |
 | duration range 0-440 h | error | 0 |
 | external: launch dates match Wikipedia | error | 0 |
@@ -40,7 +40,7 @@ Known gaps inherent to the source document (not extraction errors):
 - STS 51-L and STS-107 have no landing data (accidents)
 - STS 51-E is a cancelled mission (crew info only)
 - STS-125: Appendix A prints the orbiter+payload and orbit-insert weights transposed (231548/254376 lbs); corrected in data/weights-revised.xlsx - payload becomes 22828 lbs (~10.36 t), consistent with the Hubble servicing mission
-- STS-5: Appendix A prints the Mach-3 EOM X c.g. as 2094.8 in (leading-digit misprint, physically impossible); should be 1094.8 in per neighbouring flights and the landing value - corrected in data/weights-revised.xlsx
+- STS-5: Appendix A prints the Mach-3 EOM Xcg as 2094.8 in (leading-digit misprint, physically impossible); should be 1094.8 in per neighbouring flights and the landing value - corrected in data/weights-revised.xlsx
 
 Documented disagreements between TM-2011-216142 and the Wikipedia reference list:
 - STS-60 duration: document 8d07h (GMT-consistent, matches NASA mission archive) vs list page 7d06h - document kept

@@ -115,7 +115,7 @@ def internal_checks(m, j):
                          ("landing_xcg_in", "landing")):
         x = j.dropna(subset=[w_col])
         bad = x[(x[w_col] < 1000) | (x[w_col] > 1200)]
-        check(f"{label} X c.g. within 1000-1200 in", 2,
+        check(f"{label} Xcg within 1000-1200 in", 2,
               f"{len(x)} comparable rows",
               bad[["designation", w_col]] if len(bad) else [])
 
@@ -198,7 +198,7 @@ def main():
                "corrected in data/weights-revised.xlsx - payload becomes "
                "22828 lbs (~10.36 t), consistent with the Hubble servicing "
                "mission",
-               "- STS-5: Appendix A prints the Mach-3 EOM X c.g. as 2094.8 in "
+               "- STS-5: Appendix A prints the Mach-3 EOM Xcg as 2094.8 in "
                "(leading-digit misprint, physically impossible); should be "
                "1094.8 in per neighbouring flights and the landing value - "
                "corrected in data/weights-revised.xlsx",

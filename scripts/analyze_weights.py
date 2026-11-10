@@ -3,7 +3,7 @@
 Reads the weights_mks sheet of data/weights-revised.xlsx and produces
 figures 15-22 plus printed statistics: dry-weight drift per orbiter,
 stack composition, ET evolution (SLWT), weight distributions, landing
-vs dry weight, Mach-3 vs landing lockstep, X c.g. envelope against the
+vs dry weight, Mach-3 vs landing lockstep, Xcg envelope against the
 forward/aft limits, and SRB left/right symmetry.
 
 Chinese labels (units and acronyms like OMS/RCS stay English); run from
@@ -286,7 +286,7 @@ def fig_xcg_windows(df):
     fig_label(fig, ax1, 0.62, CG_AFT_M + 0.004, "后限·飞行", color="#c44e52")
     fig_label(fig, ax1, 0.62, CG_AFT_DESIGN_M + 0.004, "后限·设计",
               color="#c44e52")
-    ax1.set(title="着陆 X 质心窗口（按轨道器）", ylabel="着陆 X 质心 (m)")
+    ax1.set(title="着陆纵向质心窗口（按轨道器）", ylabel="着陆纵向质心 (m)")
 
     d = df.dropna(subset=["mach3_eom_xcg_m", "landing_xcg_m"])
     for orb, g in d.groupby("orbiter"):
@@ -303,18 +303,18 @@ def fig_xcg_windows(df):
     ax2.set_xlim(27.3, 28.55)
     ax2.set_ylim(27.3, 28.55)
     shift = d.landing_xcg_m - d.mach3_eom_xcg_m
-    ax2.set(title="着陆 X 质心 vs Mach 3 X 质心（红线为前/后限，虚线 y = x）",
-            xlabel="Mach 3 X 质心 (m)", ylabel="着陆 X 质心 (m)")
+    ax2.set(title="着陆纵向质心 vs Mach 3 纵向质心（红线为前/后限，虚线 y = x）",
+            xlabel="Mach 3 纵向质心 (m)", ylabel="着陆纵向质心 (m)")
     ax2.legend(fontsize=8)
 
     allx = pd.concat(data)
     STATS.append(
-        f"【规律 7】着陆质心严格受控：{len(allx)} 次着陆 X 质心全部落在前限 "
+        f"【规律 7】着陆纵向质心严格受控：{len(allx)} 次着陆纵向质心全部落在前限 "
         f"1076.7 in (65%L) 与飞行阶段后限 1109.9 in (67%L) 之间"
         f"（设计阶段后限 1118.1 in = 67.5%L 留有额外余量），"
         f"实际区间 [{allx.min():.3f}, {allx.max():.3f}] m，"
         f"仅占运营包线宽度的 {(allx.max() - allx.min()) / (CG_AFT_M - CG_FWD_M) * 100:.0f}%，"
-        f"且 Mach 3 → 着陆质心漂移极小（均值 {shift.mean() * 1000:+.0f} mm，"
+        f"且 Mach 3 → 着陆纵向质心漂移极小（均值 {shift.mean() * 1000:+.0f} mm，"
         f"sd {shift.std() * 1000:.0f} mm）")
     for ax in (ax1, ax2):
         style(ax)

@@ -10,7 +10,7 @@
 | 文件 | 内容 | 规模 |
 |---|---|---|
 | `data/missions.csv` | 每任务一行：任务号、轨道器、发射/着陆时间（GMT）、任务时长、乘组、飞行主管、轨道参数、关键事件 MET、着陆场等 | 136 行 × 60 列 |
-| `data/weights.csv` | 附录 A 重量表：轨道器/推进剂/载荷/ET/SRB 重量、累积重量、Mach 3 与着陆重量及重心 | 135 行 × 30 列 |
+| `data/weights.csv` | 附录 A 重量表：轨道器/推进剂/载荷/ET/SRB 重量、累积重量、Mach 3 与着陆重量及纵向质心 | 135 行 × 30 列 |
 | `data/weights-revised.xlsx` | 人工校对版重量数据（含 2 处源文档印刷错误修正）：`weights`（lbs/in）+ `weights_mks`（kg/m）双表单 | 135 行 × 19 列 ×2 |
 | `data/space_shuttle_missions.xlsx` | 以上数据 + Wikipedia 参考数据 + 统计汇总（4 个 sheet） | — |
 | `data/reference/wiki_sts_list.csv` | 外部核对参考（Wikipedia 任务列表） | 135 行 |
@@ -85,8 +85,8 @@
 
 基于人工校对版 `data/weights-revised.xlsx`（公制单位）的扩展分析，共 18 张图
 （中文标注）：起飞总重与构成、载荷、推进剂加注、着陆重量与着陆载荷、轨道器干重演化、
-ET 减重阶梯、Mach 3/着陆 X 质心（含前/后限包线）、SRB 左右对称性等。
-8 条统计规律、质心限值定义（前限 1076.7 in / 飞行后限 1109.9 in / 设计后限 1118.1 in）
+ET 减重阶梯、Mach 3/着陆纵向质心（含前/后限包线）、SRB 左右对称性等。
+8 条统计规律、纵向质心限值定义（前限 1076.7 in / 飞行后限 1109.9 in / 设计后限 1118.1 in）
 及两处源文档印刷错误修正（STS-125 列对调、STS-5 首位数字误排）详见
 **[`WEIGHTS_ANALYSIS.md`](WEIGHTS_ANALYSIS.md)**。
 

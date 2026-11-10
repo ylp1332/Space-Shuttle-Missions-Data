@@ -142,7 +142,7 @@ def fig_propellant_loading(df):
 
 def _draw_xcg_panel(ax, d, ycol, df, ylabel, subtitle, fwd, aft, aft_design,
                     ylim, labels):
-    """Shared rendering for the X c.g. figures (limits + annotations).
+    """Shared rendering for the Xcg figures (limits + annotations).
 
     fwd/aft/aft_design/ylim are given in the panel's own y-units
     (metres or % of reference length); labels = (forward, aft-flight,
@@ -186,19 +186,19 @@ def fig_label(fig, ax, x, y, text, color="gray", fontsize=9, va="bottom",
 M_LIM = (CG_FWD_M, CG_AFT_M, CG_AFT_DESIGN_M, (27.25, 28.62))
 PCT_LIM = (CG_FWD_M / L_REF_M * 100, CG_AFT_M / L_REF_M * 100,
            CG_AFT_DESIGN_M / L_REF_M * 100, (64.8, 68.05))
-M_LABELS = ("质心前限 65.0% L（1076.7 in）",
-            "质心后限·飞行阶段 1109.9 in（67.0% L）",
-            "质心后限·设计阶段 1118.1 in（67.5% L）")
-PCT_LABELS = ("质心前限 65.0% L（1076.7 in）",
-              "质心后限·飞行阶段 1109.9 in（67.0% L）",
-              "质心后限·设计阶段 1118.1 in（67.5% L）")
+M_LABELS = ("纵向质心前限 65.0% L（1076.7 in）",
+            "纵向质心后限·飞行阶段 1109.9 in（67.0% L）",
+            "纵向质心后限·设计阶段 1118.1 in（67.5% L）")
+PCT_LABELS = ("纵向质心前限 65.0% L（1076.7 in）",
+              "纵向质心后限·飞行阶段 1109.9 in（67.0% L）",
+              "纵向质心后限·设计阶段 1118.1 in（67.5% L）")
 
 
 def fig_landing_xcg(df):
     fig, ax = plt.subplots(figsize=(11, 5.5))
     m = df.landing_xcg_m.apply(lambda v: isinstance(v, (int, float)))
-    _draw_xcg_panel(ax, df[m], "landing_xcg_m", df, "着陆 X 质心 (m)",
-                    "历次飞行着陆 X 质心（含前/后限）\n"
+    _draw_xcg_panel(ax, df[m], "landing_xcg_m", df, "着陆纵向质心 (m)",
+                    "历次飞行着陆纵向质心（含前/后限）\n"
                     "STS-107 无着陆数据（再入失事）",
                     *M_LIM, M_LABELS)
     return fig
@@ -207,7 +207,7 @@ def fig_landing_xcg(df):
 def fig_mach3_xcg(df):
     fig, ax = plt.subplots(figsize=(11, 5.5))
     m = df.mach3_eom_xcg_m.apply(lambda v: isinstance(v, (int, float)))
-    _draw_xcg_panel(ax, df[m], "mach3_eom_xcg_m", df, "Mach 3 EOM X 质心 (m)",
+    _draw_xcg_panel(ax, df[m], "mach3_eom_xcg_m", df, "Mach 3 EOM 纵向质心 (m)",
                     "历次飞行 Mach 3 EOM 纵向质心位置（含前/后限）\n"
                     "STS-107 与 DOD 任务无数据",
                     *M_LIM, M_LABELS)
@@ -215,30 +215,30 @@ def fig_mach3_xcg(df):
 
 
 def fig_landing_xcg_percent(df):
-    """与图 14 对应的相对质心位置版：X c.g. / L_ref，百分比表示。
+    """与图 14 对应的相对纵向质心位置版：Xcg / L_ref，百分比表示。
 
     限位线按 in 值精确换算：前限 1076.7/1656.5 = 65.00%；
-    后限·飞行阶段 1109.0/1656.5 ≈ 66.95%；后限·设计阶段 1118.1 in = 67.50%。
+    后限·飞行阶段 1109.9/1656.5 = 67.00%；后限·设计阶段 1118.1 in = 67.50%。
     """
     fig, ax = plt.subplots(figsize=(11, 5.5))
     m = df.landing_xcg_m.apply(lambda v: isinstance(v, (int, float)))
     d = df[m].copy()
     d["xcg_pct"] = d.landing_xcg_m / L_REF_M * 100.0
-    _draw_xcg_panel(ax, d, "xcg_pct", df, "着陆 X 质心 (% L)",
-                    "历次飞行着陆相对质心位置（% 机身参考长度 L）\n"
+    _draw_xcg_panel(ax, d, "xcg_pct", df, "着陆纵向质心 (% L)",
+                    "历次飞行着陆相对纵向质心位置（% 机身参考长度 L）\n"
                     "L = 1656.5 in；STS-107 无着陆数据（再入失事）",
                     *PCT_LIM, PCT_LABELS)
     return fig
 
 
 def fig_mach3_xcg_percent(df):
-    """与图 24 对应的相对质心位置版：Mach 3 EOM X c.g. / L_ref（%）。"""
+    """与图 24 对应的相对纵向质心位置版：Mach 3 EOM Xcg / L_ref（%）。"""
     fig, ax = plt.subplots(figsize=(11, 5.5))
     m = df.mach3_eom_xcg_m.apply(lambda v: isinstance(v, (int, float)))
     d = df[m].copy()
     d["xcg_pct"] = d.mach3_eom_xcg_m / L_REF_M * 100.0
-    _draw_xcg_panel(ax, d, "xcg_pct", df, "Mach 3 EOM X 质心 (% L)",
-                    "历次飞行 Mach 3 EOM 相对质心位置（% 机身参考长度 L）\n"
+    _draw_xcg_panel(ax, d, "xcg_pct", df, "Mach 3 EOM 纵向质心 (% L)",
+                    "历次飞行 Mach 3 EOM 相对纵向质心位置（% 机身参考长度 L）\n"
                     "L = 1656.5 in；STS-107 与 DOD 任务无数据",
                     *PCT_LIM, PCT_LABELS)
     return fig
