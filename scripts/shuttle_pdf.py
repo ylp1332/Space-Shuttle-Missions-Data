@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 
 import pdfplumber
 
-PDF_NAME = "NASA_TM–2011–216142 Space Shuttle Missions Summary.pdf"
+PDF_NAME = "refs/NASA_TM–2011–216142 Space Shuttle Missions Summary.pdf"
 
 # 12-column x-boundaries (points), measured from the tall table rules on
 # the STS-1 page; the layout is constant across all mission pages.

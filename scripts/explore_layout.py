@@ -4,7 +4,7 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 import pdfplumber
 import re
 
-PDF = "NASA_TM–2011–216142 Space Shuttle Missions Summary.pdf"
+PDF = "refs/NASA_TM–2011–216142 Space Shuttle Missions Summary.pdf"
 
 # 12-column boundaries measured from STS-1 page tall-rect edges
 DEFAULT_COLS = [
