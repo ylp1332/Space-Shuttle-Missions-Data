@@ -14,6 +14,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+# English figures: Times New Roman throughout
+plt.rcParams["font.family"] = ["Times New Roman"]
+plt.rcParams["axes.unicode_minus"] = False
+
 OUT = os.path.join("output", "figures")
 
 ORBITER_COLORS = {

@@ -11,6 +11,7 @@
 |---|---|---|
 | `data/missions.csv` | 每任务一行：任务号、轨道器、发射/着陆时间（GMT）、任务时长、乘组、飞行主管、轨道参数、关键事件 MET、着陆场等 | 136 行 × 60 列 |
 | `data/weights.csv` | 附录 A 重量表：轨道器/推进剂/载荷/ET/SRB 重量、累积重量、Mach 3 与着陆重量及重心 | 135 行 × 30 列 |
+| `data/weights-revised.xlsx` | 人工校对版重量数据（含 2 处源文档印刷错误修正）：`weights`（lbs/in）+ `weights_mks`（kg/m）双表单 | 135 行 × 19 列 ×2 |
 | `data/space_shuttle_missions.xlsx` | 以上数据 + Wikipedia 参考数据 + 统计汇总（4 个 sheet） | — |
 | `data/reference/wiki_sts_list.csv` | 外部核对参考（Wikipedia 任务列表） | 135 行 |
 
@@ -80,8 +81,17 @@
 10. **`10_flight_rate.png` — 发射间隔**
     常态周转 30-90 天；两次事故后出现 2.5 年级空白；1997 年实现最短 52 天连续周转（STS-83→94 复飞）。
 
+### 重量数据深入分析（第 11–28 号图）
+
+基于人工校对版 `data/weights-revised.xlsx`（公制单位）的扩展分析，共 18 张图
+（中文标注）：起飞总重与构成、载荷、推进剂加注、着陆重量与着陆载荷、轨道器干重演化、
+ET 减重阶梯、Mach 3/着陆 X 质心（含前/后限包线）、SRB 左右对称性等。
+8 条统计规律、质心限值定义（前限 1076.7 in / 飞行后限 1109.9 in / 设计后限 1118.1 in）
+及两处源文档印刷错误修正（STS-125 列对调、STS-5 首位数字误排）详见
+**[`WEIGHTS_ANALYSIS.md`](WEIGHTS_ANALYSIS.md)**。
+
 ## 5. 方法备注
 
 - 提取方法：pdfplumber 词级坐标按 12 列版面切分 + 宽字距文本重连 + 逐字段正则；附录 A 使用表格线提取并对跨行合并单元格拆分；
 - 时长仲裁：印刷时长与"GMT 差值"互验，超 15 分钟偏差时以 GMT 为准（纠正了 STS-69/72 等窗口误匹配）；
-- 复现流程：`scripts/extract_missions.py` → `scripts/extract_weights.py` → `scripts/validate.py` → `scripts/plots.py` → `scripts/build_workbook.py`；测试 `pytest tests/`（25 项全部通过）。
+- 复现流程：`scripts/extract_missions.py` → `scripts/extract_weights.py` → `scripts/validate.py` → `scripts/plots.py` → `scripts/build_workbook.py`；重量深入分析：`scripts/plots_weights_mks.py` + `scripts/analyze_weights.py`（读取 `weights-revised.xlsx`，输出图 11–28 与统计规律）；测试 `pytest tests/`（25 项全部通过）。
