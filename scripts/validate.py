@@ -104,6 +104,13 @@ def internal_checks(m, j):
     check("liftoff weight = orbiter+payload+ET+2xSRB (<5000 lbs)", 2, "",
           bad[["designation"]] if len(bad) else [])
 
+    x = j.dropna(subset=["orb_wt_orbit_insert_lbs", "orb_plus_pyld_srb_ign_lbs"])
+    bad = x[x.orb_wt_orbit_insert_lbs > x.orb_plus_pyld_srb_ign_lbs]
+    check("orbit-insert weight <= orbiter+payload", 2,
+          f"{len(x)} comparable rows",
+          bad[["designation", "orb_wt_orbit_insert_lbs",
+               "orb_plus_pyld_srb_ign_lbs"]] if len(bad) else [])
+
     bad = j[(j.inclination_deg < 28) | (j.inclination_deg > 62.5)]
     check("inclination range 28-62.5 deg", 1, "",
           bad[["designation", "inclination_deg"]] if len(bad) else [])
@@ -178,6 +185,11 @@ def main():
                "published weight data",
                "- STS 51-L and STS-107 have no landing data (accidents)",
                "- STS 51-E is a cancelled mission (crew info only)",
+               "- STS-125: Appendix A prints the orbiter+payload and "
+               "orbit-insert weights transposed (231548/254376 lbs); "
+               "corrected in data/weights-revised.xlsx - payload becomes "
+               "22828 lbs (~10.36 t), consistent with the Hubble servicing "
+               "mission",
                "",
                "Documented disagreements between TM-2011-216142 and the "
                "Wikipedia reference list:",
