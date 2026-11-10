@@ -2,7 +2,7 @@
 
 ## 项目背景与目标
 
-对根目录下 `NASA_TM–2011–216142 Space Shuttle Missions Summary.pdf`（300 页，NASA JSC，2011 年 9 月）
+对 `refs/NASA_TM–2011–216142 Space Shuttle Missions Summary.pdf`（300 页，NASA JSC，2011 年 9 月）
 开展数据分析。该文档记录了美国航天飞机全部 **135 次飞行任务**（STS-1 至 STS-135，1981–2011）的
 "as-flown"（实际飞行）运行数据。
 
@@ -20,7 +20,7 @@
 | 附录 A 重量汇总 | PDF 第 273–281 页 | 135 次飞行的轨道器/OMS/RCS 推进剂、载荷、累积重量、性能余量、各阶段重量与 X 重心 | 中（规整表格，跨行续行需合并） |
 | 附录 C 飞行主管日志 | PDF 第 291–294 页 | 飞行主管名单（辅助数据） | 低 |
 
-**技术路线：** Python 3.14 + venv（`.venv/`），`pdfplumber`（词级坐标提取）→ `pandas`（清洗）→
+**技术路线：** Python 3.13 + venv（`.venv/`），`pdfplumber`（词级坐标提取）→ `pandas`（清洗）→
 `openpyxl`（Excel 输出）→ `matplotlib`（图表）→ `pytest`（单元测试）。
 
 ## 目录规划
@@ -33,10 +33,12 @@ data/           # 提取出的 CSV 数据
   space_shuttle_missions.xlsx   # 汇总 Excel 工作簿（多 sheet）
 scripts/        # 提取/校验/绘图脚本
 tests/          # pytest 单元测试
+refs/           # NASA 源 PDF（40MB，不入库）
+docs/
+  PLAN.md       # 本文件
 output/
   figures/      # 分析图表 PNG
   reports/      # 校验报告、分析报告
-PLAN.md         # 本文件
 ```
 
 ## 里程碑
