@@ -49,7 +49,7 @@ output/
 
 ### M1 — 任务摘要页数据提取 ✅（已完成）
 - [x] 编写 `scripts/extract_missions.py`（12 列坐标切分 + 宽字距重连 + 正则字段提取）
-- [x] 输出 `data/missions.csv`（136 行 × 60 列：135 次飞行 + 取消任务 51-E）
+- [x] 输出 `data/missions.csv`（136 行 × 59 列：135 次飞行 + 取消任务 51-E）
 - [x] `tests/test_extract.py`：18 项断言（STS-1/135 参考值、轨道器计数、单调性等）
 - 验收：135 行、序号无缺、25 项测试通过 → **已提交**
 
@@ -83,7 +83,10 @@ output/
   逐格验证 2057 个换算值零误差
 - [x] 发现并修正源文档印刷错误 ×2：STS-125 两列对调（payload 22828 lbs ≈ 10.36 t）、
   STS-5 Mach 3 Xcg 2094.8→1094.8 in；`validate.py` 新增对应校验项与 known-gap 记录
-  （现 0 errors / 5 warnings）
+- [x] 勘误层并入提取管道：`extract_weights.py` ERRATA 表（5 项 7 格，含修正前值断言）
+  同步全部修订至 `weights.csv` 与汇总工作簿；任务页勘误 ×2（STS-40/STS-46 纵向质心
+  数字误排）经 `extract_missions.py` ERRATA 同步至 `missions.csv`；
+  校验口径 0 errors / 3 warnings
 - [x] `refs/` 补充纵向质心包线等中文参考文档 ×2 → **已提交**
 
 ### M7 — 重量深入分析 ✅（已完成）

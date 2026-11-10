@@ -23,9 +23,11 @@ Reference: Wikipedia List of Space Shuttle missions, 135 rows, joined 135
 | cross-source: Mach-3 EOM weight (page vs Appendix A) | warning | 0 |
 | cross-source: landing weight (page vs Appendix A) | warning | 0 |
 | liftoff weight = orbiter+payload+ET+2xSRB (<5000 lbs) | warning | 3 |
-| orbit-insert weight <= orbiter+payload | warning | 1 |
-| Mach-3 EOM Xcg within 1000-1200 in | warning | 1 |
+| orbit-insert weight <= orbiter+payload | warning | 0 |
+| Mach-3 EOM Xcg within 1000-1200 in | warning | 0 |
 | landing Xcg within 1000-1200 in | warning | 0 |
+| mission-page Mach-3 Xcg within 1000-1200 in | warning | 0 |
+| mission-page landing Xcg within 1000-1200 in | warning | 0 |
 | inclination range 28-62.5 deg | error | 0 |
 | duration range 0-440 h | error | 0 |
 | external: launch dates match Wikipedia | error | 0 |
@@ -33,14 +35,16 @@ Reference: Wikipedia List of Space Shuttle missions, 135 rows, joined 135
 | external: orbiters match Wikipedia | error | 0 |
 | external: crew sizes match Wikipedia | warning | 1 |
 
-**Result: 0 errors, 5 warnings**
+**Result: 0 errors, 3 warnings**
 
 Known gaps inherent to the source document (not extraction errors):
 - 7 DOD missions (STS 51-C, 51-J, 27, 28, 33, 36, 38) have no published weight data
 - STS 51-L and STS-107 have no landing data (accidents)
 - STS 51-E is a cancelled mission (crew info only)
-- STS-125: Appendix A prints the orbiter+payload and orbit-insert weights transposed (231548/254376 lbs); corrected in data/weights-revised.xlsx - payload becomes 22828 lbs (~10.36 t), consistent with the Hubble servicing mission
-- STS-5: Appendix A prints the Mach-3 EOM Xcg as 2094.8 in (leading-digit misprint, physically impossible); should be 1094.8 in per neighbouring flights and the landing value - corrected in data/weights-revised.xlsx
+- STS-125: Appendix A prints the orbiter+payload and orbit-insert weights transposed (231548/254376 lbs); corrected via the extract_weights.py errata layer (weights.csv) and in data/weights-revised.xlsx - payload becomes 22828 lbs (~10.36 t), consistent with the Hubble servicing mission
+- STS-5: Appendix A prints the Mach-3 EOM Xcg as 2094.8 in (leading-digit misprint, physically impossible); should be 1094.8 in per neighbouring flights and the landing value - corrected via the extract_weights.py errata layer (weights.csv) and in data/weights-revised.xlsx
+- 51-C: Mach-3 Xcg printed as 1091.8 in Appendix A but set to N/A per manual review against the mission-page table (proofread workbook ruling)
+- Mission pages print STS-40 Mach-3 Xcg as 1279.6 in and STS-46 landing Xcg as 1179.6 in - digit misprints; corrected to 1079.6 via the extract_missions.py errata layer (missions.csv)
 
 Documented disagreements between TM-2011-216142 and the Wikipedia reference list:
 - STS-60 duration: document 8d07h (GMT-consistent, matches NASA mission archive) vs list page 7d06h - document kept

@@ -9,7 +9,7 @@
 
 | 文件 | 内容 | 规模 |
 |---|---|---|
-| `data/missions.csv` | 每任务一行：任务号、轨道器、发射/着陆时间（GMT）、任务时长、乘组、飞行主管、轨道参数、关键事件 MET、着陆场等 | 136 行 × 60 列 |
+| `data/missions.csv` | 每任务一行：任务号、轨道器、发射/着陆时间（GMT）、任务时长、乘组、飞行主管、轨道参数、关键事件 MET、着陆场等 | 136 行 × 59 列 |
 | `data/weights.csv` | 附录 A 重量表：轨道器/推进剂/载荷/ET/SRB 重量、累积重量、Mach 3 与着陆重量及纵向质心 | 135 行 × 30 列 |
 | `data/weights-revised.xlsx` | 人工校对版重量数据（含 2 处源文档印刷错误修正）：`weights`（lbs/in）+ `weights_mks`（kg/m）双表单 | 135 行 × 19 列 ×2 |
 | `data/space_shuttle_missions.xlsx` | 以上数据 + Wikipedia 参考数据 + 统计汇总（4 个 sheet） | — |

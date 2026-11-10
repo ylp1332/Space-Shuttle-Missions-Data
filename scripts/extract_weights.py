@@ -134,6 +134,55 @@ def extract(pdf) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+# Appendix A errata: corrections applied to the extracted output so the
+# pipeline stays faithful-but-corrected on re-runs.  Each entry documents
+# the source-document printing error and the evidence for the fix.
+#   STS-125: orb_plus_pyld and orb_wt_orbit_insert are printed transposed
+#            (231548/254376) - swapped back; payload becomes 22828 lbs
+#            (~10.36 t), matching the Hubble servicing load.
+#   STS-5:   Mach-3 EOM Xcg printed as 2094.8 in - leading-digit misprint;
+#            should be 1094.8 per neighbouring flights and the landing value.
+#   STS-125/127: right SRB ignition weight blank in the document - filled
+#            from the proofread workbook (weights-revised.xlsx).
+#   51-C:    landing Xcg printed as 1096.8 - should be 1091.8, matching the
+#            mission page (both mach3/landing Xcg list 1091.8 there).
+#            Mach-3 Xcg printed as 1091.8 but set to N/A per manual review
+#            against the mission-page table (proofread workbook ruling).
+ERRATA = {
+    # base: {column: (printed_value, corrected_value)}
+    "5":     {"mach3_eom_xcg_in": (2094.8, 1094.8)},
+    "51-C":  {"mach3_eom_xcg_in": (1091.8, None),
+              "landing_xcg_in": (1096.8, 1091.8)},
+    "125":   {"orb_plus_pyld_srb_ign_lbs": (231548, 254376),
+              "orb_wt_orbit_insert_lbs": (254376, 231548),
+              "srb_wt_right_srb_ign_lbs": (None, 1298774)},
+    "127":   {"srb_wt_right_srb_ign_lbs": (None, 1298296)},
+}
+
+
+def apply_errata(df):
+    """Apply documented Appendix A errata to the extracted frame."""
+    hits = 0
+    for base, fixes in ERRATA.items():
+        row = df.index[df.base.astype(str) == base]
+        if not len(row):
+            print(f"[ERRATUM] base {base!r} not found - skipped")
+            continue
+        i = row[0]
+        for col, (printed, corrected) in fixes.items():
+            current = df.at[i, col]
+            ok = (printed is None and pd.isna(current)) or (
+                isinstance(current, float) and abs(current - printed) < 0.5)
+            if not ok:
+                raise ValueError(
+                    f"erratum precondition failed for {base}.{col}: "
+                    f"expected {printed!r}, found {current!r}")
+            df.at[i, col] = corrected
+            hits += 1
+    print(f"[ERRATUM] applied {hits} documented corrections to Appendix A data")
+    return df
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pdf", default=sp.PDF_NAME)
@@ -147,6 +196,7 @@ def main():
         if col in ("flight", "base") or col.startswith(("perf_marg", "raw_")):
             continue
         df[col] = pd.to_numeric(df[col], errors="coerce")
+    df = apply_errata(df)
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
     df.to_csv(args.out, index=False)
     print(f"wrote {args.out}: {len(df)} rows, {len(df.columns)} cols")

@@ -8,7 +8,7 @@
 
 | 文件 | 内容 | 规模 |
 |---|---|---|
-| `data/missions.csv` | 每任务一行：任务号、轨道器、发射/着陆时间（GMT）、任务时长、乘组、飞行主管、轨道参数、关键事件 MET、着陆场等 | 136 行 × 60 列 |
+| `data/missions.csv` | 每任务一行：任务号、轨道器、发射/着陆时间（GMT）、任务时长、乘组、飞行主管、轨道参数、关键事件 MET、着陆场等 | 136 行 × 59 列 |
 | `data/weights.csv` | 附录 A 重量表：轨道器/推进剂/载荷/ET/SRB 重量、累积重量、Mach 3 与着陆重量及纵向质心 | 135 行 × 30 列 |
 | `data/weights-revised.xlsx` | 人工校对版重量数据（含 2 处源文档印刷错误修正）：`weights`（lbs/in）+ `weights_mks`（kg/m）双表单 | 135 行 × 19 列 ×2 |
 | `data/space_shuttle_missions.xlsx` | 汇总工作簿（4 sheet：Missions / Weights_AppendixA / Reference_Wikipedia / Summary） | — |
@@ -81,11 +81,13 @@ python -m pytest
 ## 数据质量
 
 - **内部一致性**：0 错误（序号完整唯一、时长与 GMT 差值吻合、双源重量 0 差异等；
-  5 项警告均为源文档口径问题或已修正的印刷错误，详见报告）
+  3 项警告均为源文档口径差异，详见报告）
 - **外部核对**：发射日期 135/135、轨道器 135/135、时长 134/135、乘组 134/135
   与 Wikipedia 任务列表一致（差异项均为文档口径问题，详见报告）
-- **源文档勘误**（已在 `weights-revised.xlsx` 修正并记录）：STS-125 两列重量对调、
-  STS-5 Mach 3 纵向质心首位数字误排
+- **源文档勘误**（经提取脚本勘误层应用于 `missions.csv` / `weights.csv` 与汇总工作簿，
+  并同步于 `weights-revised.xlsx`）：STS-125 两列重量对调、STS-5 Mach 3 纵向质心
+  首位数字误排、STS-125/127 右 SRB 补值、51-C 着陆纵向质心校正与 Mach 3 纵向质心
+  置空（人工核对裁定）、STS-40/STS-46 任务页纵向质心数字误排
 - 详见 [`output/reports/validation_report.md`](output/reports/validation_report.md)、
   [`output/reports/ANALYSIS.md`](output/reports/ANALYSIS.md) 与
   [`output/reports/WEIGHTS_ANALYSIS.md`](output/reports/WEIGHTS_ANALYSIS.md)

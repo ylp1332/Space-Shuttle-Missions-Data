@@ -378,6 +378,42 @@ def extract_mission(m: sp.MissionPages) -> dict:
     return rec
 
 
+# Mission-page errata: corrections applied to the extracted output so the
+# pipeline stays faithful-but-corrected on re-runs.
+#   STS-40: Mach-3 Xcg printed as 1279.6 in - leading-digit misprint;
+#            should be 1079.6 (landing Xcg prints 1080.9, all other
+#            missions fall in 1077-1098).
+#   STS-46: landing Xcg printed as 1179.6 in - second-digit misprint;
+#            should be 1079.6 (Mach-3 Xcg prints 1078.2).
+ERRATA = {
+    # base: {column: (printed_value, corrected_value)}
+    "40": {"mach3_xcg": (1279.6, 1079.6)},
+    "46": {"landing_xcg": (1179.6, 1079.6)},
+}
+
+
+def apply_errata(df):
+    """Apply documented mission-page errata to the extracted frame."""
+    hits = 0
+    for base, fixes in ERRATA.items():
+        row = df.index[df.base.astype(str) == base]
+        if not len(row):
+            print(f"[ERRATUM] base {base!r} not found - skipped")
+            continue
+        i = row[0]
+        for col, (printed, corrected) in fixes.items():
+            current = pd.to_numeric(pd.Series([df.at[i, col]]),
+                                    errors="coerce").iloc[0]
+            if pd.isna(current) or abs(float(current) - printed) > 0.5:
+                raise ValueError(
+                    f"erratum precondition failed for {base}.{col}: "
+                    f"expected {printed!r}, found {current!r}")
+            df.at[i, col] = str(corrected)
+            hits += 1
+    print(f"[ERRATUM] applied {hits} documented corrections to mission pages")
+    return df
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pdf", default=sp.PDF_NAME)
@@ -389,6 +425,7 @@ def main():
     print(f"missions grouped: {len(missions)}")
     rows = [extract_mission(m) for m in missions]
     df = pd.DataFrame(rows)
+    df = apply_errata(df)
 
     # orbiter flight numbering: fill gaps by order within each orbiter
     # (a few pages print the number in a form the regex misses)

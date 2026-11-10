@@ -119,6 +119,14 @@ def internal_checks(m, j):
               f"{len(x)} comparable rows",
               bad[["designation", w_col]] if len(bad) else [])
 
+    for m_col, label in (("mach3_xcg", "mission-page Mach-3"),
+                         ("landing_xcg", "mission-page landing")):
+        x = j.dropna(subset=[m_col])
+        bad = x[(x[m_col] < 1000) | (x[m_col] > 1200)]
+        check(f"{label} Xcg within 1000-1200 in", 2,
+              f"{len(x)} comparable rows",
+              bad[["designation", m_col]] if len(bad) else [])
+
     bad = j[(j.inclination_deg < 28) | (j.inclination_deg > 62.5)]
     check("inclination range 28-62.5 deg", 1, "",
           bad[["designation", "inclination_deg"]] if len(bad) else [])
@@ -195,13 +203,22 @@ def main():
                "- STS 51-E is a cancelled mission (crew info only)",
                "- STS-125: Appendix A prints the orbiter+payload and "
                "orbit-insert weights transposed (231548/254376 lbs); "
-               "corrected in data/weights-revised.xlsx - payload becomes "
-               "22828 lbs (~10.36 t), consistent with the Hubble servicing "
-               "mission",
+               "corrected via the extract_weights.py errata layer "
+               "(weights.csv) and in data/weights-revised.xlsx - payload "
+               "becomes 22828 lbs (~10.36 t), consistent with the Hubble "
+               "servicing mission",
                "- STS-5: Appendix A prints the Mach-3 EOM Xcg as 2094.8 in "
                "(leading-digit misprint, physically impossible); should be "
                "1094.8 in per neighbouring flights and the landing value - "
-               "corrected in data/weights-revised.xlsx",
+               "corrected via the extract_weights.py errata layer "
+               "(weights.csv) and in data/weights-revised.xlsx",
+               "- 51-C: Mach-3 Xcg printed as 1091.8 in Appendix A but set "
+               "to N/A per manual review against the mission-page table "
+               "(proofread workbook ruling)",
+               "- Mission pages print STS-40 Mach-3 Xcg as 1279.6 in and "
+               "STS-46 landing Xcg as 1179.6 in - digit misprints; "
+               "corrected to 1079.6 via the extract_missions.py errata "
+               "layer (missions.csv)",
                "",
                "Documented disagreements between TM-2011-216142 and the "
                "Wikipedia reference list:",

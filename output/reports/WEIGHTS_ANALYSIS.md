@@ -27,7 +27,10 @@
 | STS-5 | Mach 3 EOM 纵向质心首位数字误排：2094.8 in | 应为 1094.8 in——邻行（STS-4: 1092.9 / STS-6: 1099.7）与同任务着陆值（1096.3）均在此量级；2094.8 物理上不可能 |
 
 两处修正均已被 `scripts/validate.py` 的新增校验项捕获并记录于
-[`validation_report.md`](validation_report.md)（当前 0 errors / 5 warnings）。
+[`validation_report.md`](validation_report.md)（当前 0 errors / 3 warnings），
+并已通过 `extract_weights.py` 的**勘误层**（ERRATA 表）应用于
+`data/weights.csv` 与汇总工作簿 `data/space_shuttle_missions.xlsx`
+（含 3 处人工校对值），保证提取管道重跑后修正不丢失。
 
 **（c）单位换算**：`weights_mks` 表单由 lbs/in 精确换算
 （1 lb = 0.45359237 kg；1 in = 0.0254 m），非数值（N/A、空）原样保留。
@@ -133,6 +136,8 @@ RCS 消耗与排空，两个时点的重量记录在数据精度内一一对应�
 ## 5. 方法备注
 
 - 数据读取：`openpyxl` 直读 `weights_mks` 表单，`'N/A'`/空值转 NaN 后按列数值化；
+  `weights.csv` 与汇总工作簿经 `extract_weights.py` 勘误层（ERRATA 表，5 项 6 格，
+  含修正前值断言，PDF 原文变化时报错而非静默错改）同步全部修订；
 - 绘图：`scripts/plots_weights_mks.py`（11–14、23–28）与 `scripts/analyze_weights.py`
   （15–22，同步输出统计规律）；150 dpi，`bbox_inches="tight"`；
 - 字体：中文宋体（SimSun）+ 西文/数字 Times New Roman，经
