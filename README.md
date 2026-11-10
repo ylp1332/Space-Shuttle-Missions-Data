@@ -10,6 +10,7 @@
 |---|---|---|
 | `data/missions.csv` | 每任务一行：任务号、轨道器、发射/着陆时间（GMT）、任务时长、乘组、飞行主管、轨道参数、关键事件 MET、着陆场等 | 136 行 × 60 列 |
 | `data/weights.csv` | 附录 A 重量表：轨道器/推进剂/载荷/ET/SRB 重量、累积重量、Mach 3 与着陆重量及重心 | 135 行 × 30 列 |
+| `data/weights-revised.xlsx` | 人工校对版重量数据（含 2 处源文档印刷错误修正）：`weights`（lbs/in）+ `weights_mks`（kg/m）双表单 | 135 行 × 19 列 ×2 |
 | `data/space_shuttle_missions.xlsx` | 汇总工作簿（4 sheet：Missions / Weights_AppendixA / Reference_Wikipedia / Summary） | — |
 | `data/reference/wiki_sts_list.csv` | 外部核对参考（Wikipedia 任务列表，已入库） | 135 行 |
 
@@ -19,12 +20,12 @@
 data/           # 提取出的数据集与汇总工作簿
   reference/          # 外部核对参考数据
 docs/           # 项目文档（PLAN.md 工作计划）
-refs/           # NASA 源 PDF（40MB，已入库）
-scripts/        # 提取/校验/绘图/工作簿脚本
+refs/           # NASA 源 PDF（40MB）+ 质心包线等中文参考文档（均已入库）
+scripts/        # 提取/校验/绘图/分析/工作簿脚本
 tests/          # pytest 单元测试（25 项）
 output/
-  figures/      # 10 张分析图表 PNG（150 dpi）
-  reports/      # 数据校验报告、分析报告
+  figures/      # 28 张分析图表 PNG（150 dpi；11–28 号为中文标注）
+  reports/      # 校验报告、分析报告、重量深入分析报告
 ```
 
 ## 环境搭建
@@ -55,11 +56,15 @@ python scripts/extract_weights.py             # → data/weights.csv
 # 3. 数据校验（内部一致性 11 项 + 外部核对 4 项）
 python scripts/validate.py                    # → output/reports/validation_report.md
 
-# 4. 分析图表
-python scripts/plots.py                       # → output/figures/*.png
+# 4. 分析图表（英文标注，图 01-10）
+python scripts/plots.py                       # → output/figures/01-10_*.png
 
 # 5. 汇总 Excel 工作簿
 python scripts/build_workbook.py              # → data/space_shuttle_missions.xlsx
+
+# 6. 重量深入分析（中文标注，图 11-28；读取 weights-revised.xlsx）
+python scripts/plots_weights_mks.py           # → 图 11-14、23-28
+python scripts/analyze_weights.py             # → 图 15-22 + 统计规律（stdout）
 ```
 
 提取脚本幂等：重跑覆盖输出，不修改 PDF 原文件。
@@ -75,11 +80,15 @@ python -m pytest
 
 ## 数据质量
 
-- **内部一致性**：0 错误（序号完整唯一、时长与 GMT 差值吻合、双源重量 0 差异等 11 项）
+- **内部一致性**：0 错误（序号完整唯一、时长与 GMT 差值吻合、双源重量 0 差异等；
+  5 项警告均为源文档口径问题或已修正的印刷错误，详见报告）
 - **外部核对**：发射日期 135/135、轨道器 135/135、时长 134/135、乘组 134/135
   与 Wikipedia 任务列表一致（差异项均为文档口径问题，详见报告）
-- 详见 [`output/reports/validation_report.md`](output/reports/validation_report.md)
-  与 [`output/reports/ANALYSIS.md`](output/reports/ANALYSIS.md)
+- **源文档勘误**（已在 `weights-revised.xlsx` 修正并记录）：STS-125 两列重量对调、
+  STS-5 Mach 3 质心首位数字误排
+- 详见 [`output/reports/validation_report.md`](output/reports/validation_report.md)、
+  [`output/reports/ANALYSIS.md`](output/reports/ANALYSIS.md) 与
+  [`output/reports/WEIGHTS_ANALYSIS.md`](output/reports/WEIGHTS_ANALYSIS.md)
 
 ## 出处
 

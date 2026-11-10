@@ -77,6 +77,29 @@ output/
 - [x] `output/reports/ANALYSIS.md` 分析报告
 - [x] 更新 PLAN.md → **已提交**
 
+### M6 — 人工校对数据入库与公制表单 ✅（已完成）
+- [x] `data/weights-revised.xlsx`：人工校对版入库（表单更名 `weights_mks`）
+- [x] 新增 `weights_metric`→`weights_mks` 公制表单（lbs→kg ×0.45359237、in→m ×0.0254），
+  逐格验证 2057 个换算值零误差
+- [x] 发现并修正源文档印刷错误 ×2：STS-125 两列对调（payload 22828 lbs ≈ 10.36 t）、
+  STS-5 Mach 3 X c.g. 2094.8→1094.8 in；`validate.py` 新增对应校验项与 known-gap 记录
+  （现 0 errors / 5 warnings）
+- [x] `refs/` 补充质心包线等中文参考文档 ×2 → **已提交**
+
+### M7 — 重量深入分析 ✅（已完成）
+- [x] `scripts/plots_weights_mks.py`：图 11–14、23–28（起飞总重/载荷/推进剂/质心/着陆系列）
+- [x] `scripts/analyze_weights.py`：图 15–22 + 8 条统计规律输出
+- [x] 质心限位线：前限 1076.7 in（65%L）、飞行阶段后限 1109.9 in（67%L）、
+  设计阶段后限 1118.1 in（67.5%L），L = 1656.5 in
+- [x] 图表经视觉模型多轮验收（碰撞/塌缩问题修复）→ **已提交**
+
+### M8 — 图表规范化与重量分析报告 ✅（已完成）
+- [x] 全部 28 张图：中文宋体 + 西文/数字 Times New Roman（font.family 回退链）；
+  术语统一（质心/起飞总重/载荷/着陆载荷）
+- [x] 规避 matplotlib 3.11.2 小字号自由文本中文静默塌缩缺陷（`fig_label` + 字号≥9）
+- [x] `output/reports/WEIGHTS_ANALYSIS.md` 重量深入分析报告；ANALYSIS.md/PLAN.md/README.md 同步更新
+- [x] requirements.txt 与环境核对一致 → **本次提交**
+
 ## 约定
 
 - 所有脚本在 `.venv` 下运行；输出统一 UTF-8；
