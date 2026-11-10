@@ -111,6 +111,14 @@ def internal_checks(m, j):
           bad[["designation", "orb_wt_orbit_insert_lbs",
                "orb_plus_pyld_srb_ign_lbs"]] if len(bad) else [])
 
+    for w_col, label in (("mach3_eom_xcg_in", "Mach-3 EOM"),
+                         ("landing_xcg_in", "landing")):
+        x = j.dropna(subset=[w_col])
+        bad = x[(x[w_col] < 1000) | (x[w_col] > 1200)]
+        check(f"{label} X c.g. within 1000-1200 in", 2,
+              f"{len(x)} comparable rows",
+              bad[["designation", w_col]] if len(bad) else [])
+
     bad = j[(j.inclination_deg < 28) | (j.inclination_deg > 62.5)]
     check("inclination range 28-62.5 deg", 1, "",
           bad[["designation", "inclination_deg"]] if len(bad) else [])
@@ -190,6 +198,10 @@ def main():
                "corrected in data/weights-revised.xlsx - payload becomes "
                "22828 lbs (~10.36 t), consistent with the Hubble servicing "
                "mission",
+               "- STS-5: Appendix A prints the Mach-3 EOM X c.g. as 2094.8 in "
+               "(leading-digit misprint, physically impossible); should be "
+               "1094.8 in per neighbouring flights and the landing value - "
+               "corrected in data/weights-revised.xlsx",
                "",
                "Documented disagreements between TM-2011-216142 and the "
                "Wikipedia reference list:",
