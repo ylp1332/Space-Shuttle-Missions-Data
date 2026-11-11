@@ -1,6 +1,6 @@
 # 航天飞机任务数据分析（Space Shuttle Missions Data）
 
-从 NASA 技术报告 **NASA/TM–2011–216142《Space Shuttle Missions Summary》**（JSC，2011 年 9 月，300 页）
+从 NASA 技术报告 **NASA/TM–2011–216142《Space Shuttle Missions Summary》**（JSC，2011 年 9 月）
 中提取并校验美国航天飞机全部 **135 次飞行任务**（STS-1 至 STS-135，1981–2011）的
 "as-flown"（实际飞行）运行数据，输出结构化数据集、分析图表与报告。
 
@@ -30,7 +30,7 @@ output/
 
 ## 环境搭建
 
-要求 Python 3.13。
+建议 Python 3.13。
 
 ```bash
 python -m venv .venv
@@ -42,7 +42,7 @@ python -m venv .venv
 > 检索 "NASA TM-2011-216142"。提取类脚本依赖此文件；校验、绘图与工作簿
 > 脚本只读取已入库的 CSV，无需 PDF。
 
-## 复现流程
+## 运行流程
 
 按顺序在项目根目录运行：
 
@@ -69,7 +69,7 @@ python scripts/analyze_weights.py             # → 图 15-22 + 统计规律（s
 
 提取脚本幂等：重跑覆盖输出，不修改 PDF 原文件。
 
-## 测试
+## 运行测试
 
 ```bash
 python -m pytest
