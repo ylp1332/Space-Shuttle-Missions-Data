@@ -22,7 +22,7 @@ Reference: Wikipedia List of Space Shuttle missions, 135 rows, joined 135
 | orbiter flight numbering continuous | warning | 0 |
 | cross-source: Mach-3 EOM weight (page vs Appendix A) | warning | 0 |
 | cross-source: landing weight (page vs Appendix A) | warning | 0 |
-| liftoff weight = orbiter+payload+ET+2xSRB (<5000 lbs) | warning | 3 |
+| liftoff weight = orb+payload+ET+2xSRB (<5000 lbs) | warning | 3 |
 | orbit-insert weight <= orbiter+payload | warning | 0 |
 | Mach-3 EOM Xcg within 1000-1200 in | warning | 0 |
 | landing Xcg within 1000-1200 in | warning | 0 |
@@ -49,4 +49,4 @@ Known gaps inherent to the source document (not extraction errors):
 Documented disagreements between TM-2011-216142 and the Wikipedia reference list:
 - STS-60 duration: document 8d07h (GMT-consistent, matches NASA mission archive) vs list page 7d06h - document kept
 - STS-85 crew: document header '(7)' vs list '6' - document kept
-- liftoff weight sum differs on STS-1, STS-30, STS-32 by 9-30k lbs (independent bookkeeping columns in the source)
+- liftoff weight component sum: the orbiter+payload, ET and 2xSRB columns and the shuttle total come from independent bookkeeping in the source document; the sum matches the total exactly on 62 of 128 comparable rows.  Residual differences follow the appendix page generation: early SODB-era pages (through STS-26) print component sums above the total (up to +18.5k lbs on STS-1), late TDDP-era pages (STS-89 onward) below it (constant -199 to -1235 lbs per era); every affected cell was verified cell-by-cell against the PDF and matches as printed, so values are kept as published

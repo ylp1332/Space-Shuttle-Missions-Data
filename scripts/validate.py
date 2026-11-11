@@ -97,12 +97,16 @@ def internal_checks(m, j):
               diff[["designation", "page", "app"]] if len(diff) else [])
 
     x = j.dropna(subset=["shuttle_wt_srb_ign_lbs"])
-    est = (x.orb_wt_srb_ign_lbs + x.pyld_flight_total_lbs
-           + x.et_wt_srb_ign_lbs + x.srb_wt_left_srb_ign_lbs
-           + x.srb_wt_right_srb_ign_lbs)
+    # use the native orb+payload column: orb_wt + pyld_flight_total is a
+    # spliced payload proxy (the raw payload block changes meaning between
+    # SODB and TDDP pages) and creates false outliers such as STS-30
+    est = (x.orb_plus_pyld_srb_ign_lbs + x.et_wt_srb_ign_lbs
+           + x.srb_wt_left_srb_ign_lbs + x.srb_wt_right_srb_ign_lbs)
     bad = x[((est - x.shuttle_wt_srb_ign_lbs).abs() > 5000)]
-    check("liftoff weight = orbiter+payload+ET+2xSRB (<5000 lbs)", 2, "",
-          bad[["designation"]] if len(bad) else [])
+    exact = int(((est - x.shuttle_wt_srb_ign_lbs).abs() < 0.5).sum())
+    check("liftoff weight = orb+payload+ET+2xSRB (<5000 lbs)", 2,
+          f"{len(x)} comparable rows, {exact} exact",
+          bad[["designation", "shuttle_wt_srb_ign_lbs"]] if len(bad) else [])
 
     x = j.dropna(subset=["orb_wt_orbit_insert_lbs", "orb_plus_pyld_srb_ign_lbs"])
     bad = x[x.orb_wt_orbit_insert_lbs > x.orb_plus_pyld_srb_ign_lbs]
@@ -226,8 +230,17 @@ def main():
                "NASA mission archive) vs list page 7d06h - document kept",
                "- STS-85 crew: document header '(7)' vs list '6' - document "
                "kept",
-               "- liftoff weight sum differs on STS-1, STS-30, STS-32 by "
-               "9-30k lbs (independent bookkeeping columns in the source)"]
+               "- liftoff weight component sum: the orbiter+payload, ET and "
+               "2xSRB columns and the shuttle total come from independent "
+               "bookkeeping in the source document; the sum matches the "
+               "total exactly on 62 of 128 comparable rows.  Residual "
+               "differences follow the appendix page generation: early "
+               "SODB-era pages (through STS-26) print component sums above "
+               "the total (up to +18.5k lbs on STS-1), late TDDP-era pages "
+               "(STS-89 onward) below it (constant -199 to -1235 lbs per "
+               "era); every affected cell was verified cell-by-cell against "
+               "the PDF and matches as printed, so values are kept as "
+               "published"]
 
     out_dir = Path("output") / "reports"
     out_dir.mkdir(parents=True, exist_ok=True)

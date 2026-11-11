@@ -10,7 +10,7 @@
 |---|---|---|
 | `data/missions.csv` | 每任务一行：任务号、轨道器、发射/着陆时间（GMT）、任务时长、乘组、飞行主管、轨道参数、关键事件 MET、着陆场等 | 136 行 × 59 列 |
 | `data/weights.csv` | 附录 A 重量表：轨道器/推进剂/载荷/ET/SRB 重量、累积重量、Mach 3 与着陆重量及纵向质心 | 135 行 × 30 列 |
-| `data/weights-revised.xlsx` | 人工校对版重量数据（含 2 处源文档印刷错误修正）：`weights`（lbs/in）+ `weights_mks`（kg/m）双表单 | 135 行 × 19 列 ×2 |
+| `data/weights-revised.xlsx` | 人工校对版重量数据（2 处源文档印刷错误修正 + 3 处人工校对值）：`weights`（lbs/in）+ `weights_mks`（kg/m）双表单 | 135 行 × 19 列 ×2 |
 | `data/space_shuttle_missions.xlsx` | 汇总工作簿（4 sheet：Missions / Weights_AppendixA / Reference_Wikipedia / Summary） | — |
 | `data/reference/wiki_sts_list.csv` | 外部核对参考（Wikipedia 任务列表，已入库） | 135 行 |
 
@@ -53,7 +53,7 @@ python scripts/extract_missions.py            # → data/missions.csv
 # 2. 提取附录 A 重量表（PDF 第 274-282 页）
 python scripts/extract_weights.py             # → data/weights.csv
 
-# 3. 数据校验（内部一致性 11 项 + 外部核对 4 项）
+# 3. 数据校验（内部一致性 16 项 + 外部核对 4 项）
 python scripts/validate.py                    # → output/reports/validation_report.md
 
 # 4. 分析图表（英文标注，图 01-10）
@@ -80,8 +80,9 @@ python -m pytest
 
 ## 数据质量
 
-- **内部一致性**：0 错误（序号完整唯一、时长与 GMT 差值吻合、双源重量 0 差异等；
-  3 项警告均为源文档口径差异，详见报告）
+- **内部一致性**：0 错误（序号完整唯一、时长与 GMT 差值吻合、双源重量 0 差异等）；
+  1 项警告为起飞重量"组件之和 vs 总量"的源文档分代记账口径（已逐格核对 PDF，
+  详见报告与 `WEIGHTS_ANALYSIS.md` §2(d)）
 - **外部核对**：发射日期 135/135、轨道器 135/135、时长 134/135、乘组 134/135
   与 Wikipedia 任务列表一致（差异项均为文档口径问题，详见报告）
 - **源文档勘误**（经提取脚本勘误层应用于 `missions.csv` / `weights.csv` 与汇总工作簿，

@@ -23,23 +23,27 @@
 **技术路线：** Python 3.13 + venv（`.venv/`），`pdfplumber`（词级坐标提取）→ `pandas`（清洗）→
 `openpyxl`（Excel 输出）→ `matplotlib`（图表）→ `pytest`（单元测试）。
 
-## 目录规划
+## 目录规划（随项目演进更新，当前实际结构）
 
 ```
-data/           # 提取出的 CSV 数据
-  missions.csv        # 主数据集：每任务一行（发射/着陆/时长/乘组/轨道/重量等）
-  weights.csv         # 附录 A：每任务重量明细
-  flight_directors.csv# 附录 C：飞行主管
-  space_shuttle_missions.xlsx   # 汇总 Excel 工作簿（多 sheet）
-scripts/        # 提取/校验/绘图脚本
-tests/          # pytest 单元测试
-refs/           # NASA 源 PDF（40MB，不入库）
+data/           # 提取出的数据集与汇总工作簿
+  missions.csv               # 主数据集：每任务一行（发射/着陆/时长/乘组/轨道/重量等）
+  weights.csv                # 附录 A：每任务重量明细
+  weights-revised.xlsx       # 人工校对版重量数据（英制/公制双表单）
+  space_shuttle_missions.xlsx# 汇总 Excel 工作簿（4 sheet）
+  reference/wiki_sts_list.csv# 外部核对参考（Wikipedia 任务列表）
+scripts/        # 提取/校验/绘图/分析/工作簿脚本
+tests/          # pytest 单元测试（25 项）
+refs/           # NASA 源 PDF（40MB，已入库）+ 纵向质心包线等中文参考文档
 docs/
   PLAN.md       # 本文件
 output/
-  figures/      # 分析图表 PNG
-  reports/      # 校验报告、分析报告
+  figures/      # 28 张分析图表 PNG
+  reports/      # 校验报告、分析报告、重量深入分析报告
 ```
+
+> 附录 C 飞行主管日志（PDF 第 291–294 页）经勘察后未单独建库——主管名单已含于
+> `missions.csv` 的 `flight_directors` / `fd_count` 列。
 
 ## 里程碑
 
@@ -60,7 +64,7 @@ output/
 - 验收：双源重量 0 差异 → **已提交**
 
 ### M3 — 数据核实 ✅（已完成）
-- [x] `scripts/validate.py` 两级校验（内部 11 项 + 外部 4 项）
+- [x] `scripts/validate.py` 两级校验（内部 11 项 + 外部 4 项；M6/M9 增补校验项后现为内部 16 项）
 - [x] 验证驱动修复：OCR 天数离群值、误读发射日期（STS-4/7）、乘组头格式、
   STS-107 计划着陆场置空、GMT/印刷日期仲裁
 - [x] 结果：**0 错误、3 警告**（均为文档口径差异，已记录于报告）
@@ -101,7 +105,19 @@ output/
   术语统一（纵向质心 Xcg/起飞总重/载荷/着陆载荷）
 - [x] 规避 matplotlib 3.11.2 小字号自由文本中文静默塌缩缺陷（`fig_label` + 字号≥9）
 - [x] `output/reports/WEIGHTS_ANALYSIS.md` 重量深入分析报告；ANALYSIS.md/PLAN.md/README.md 同步更新
-- [x] requirements.txt 与环境核对一致 → **本次提交**
+- [x] requirements.txt 与环境核对一致 → **已提交**
+
+### M9 — 数据集表头文档化与起飞重量口径审计 ✅（已完成）
+- [x] `ANALYSIS.md` §1：各数据文件（missions.csv / weights.csv / weights-revised.xlsx /
+  space_shuttle_missions.xlsx / wiki_sts_list.csv）表头逐列说明（含备注列：
+  时间基准 GMT=UTC、当地时、MET 零点=T-0、SRB IGN=liftoff、Mach 3 EOM、全停等）
+- [x] 起飞重量"组件之和 vs 总量"审计：逐格对照 PDF 附录 A，提取值与印刷值一致；
+  残差为源文档分代记账口径（62/128 行精确为零；早期 SODB 页偏正、后期 TDDP 页
+  恒定偏负），记录于 `WEIGHTS_ANALYSIS.md` §2(d)，数据保留原值
+- [x] `validate.py` 和式校验修正：改用附录 A 原生 `orb_plus_pyld_srb_ign` 列
+  （原拼接口径在 STS-30 产生 −30,230 lbs 假警报）；报告 Summary 同步更新
+- [x] `WEIGHTS_ANALYSIS.md` 新增 §1 数据集说明（双表单表头，编号新增，§1–§5 顺延
+  为 §2–§6，交叉引用同步）；README/PLAN 过时说明修正 → **本次提交**
 
 ## 约定
 
